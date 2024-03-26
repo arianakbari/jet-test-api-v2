@@ -71,15 +71,11 @@ public class Game {
     }
 
     public void addPlayer(Player player) {
-        if (players == null) {
-            players = new ArrayList<>();
-        }
-
-        if (players.size() == 2) {
+        if (getPlayers().size() == 2) {
             throw new IllegalArgumentException("Game is full. Can't add player!");
         }
 
-        players.add(player);
+        getPlayers().add(player);
     }
 
     public void setInitialCurrentTurnPlayer(Player player) {

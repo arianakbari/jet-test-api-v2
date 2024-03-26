@@ -43,7 +43,6 @@ public class GameService implements IGameService {
             // join if a joinable game exists
             Game game = gameOptional.get();
             game.startGame(email, inputType);
-            System.out.println(game);
             game = repository.save(game, false);
             // notify other player that another player joined
             eventPublisher.publish(new GameEvent(Mapper.toDto(game), game.getOtherPlayersId(game.getCurrentTurnPlayer().getId()), GameEvent.JOINED));

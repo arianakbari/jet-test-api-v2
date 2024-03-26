@@ -57,19 +57,24 @@ public class Mapper {
 
     public static PlayerResponseDto toDto(Player player) {
         return PlayerResponseDto.builder()
-                .id(player.getId().getValue())
+                .id(player.getId() != null ? player.getId().getValue() : null)
                 .email(player.getEmail().getValue())
                 .inputType(player.getInputType())
                 .build();
     }
 
     public static GameResponseDto toDto(Game game) {
+        System.out.println(game.getCurrentTurnPlayer());
         return GameResponseDto.builder()
                 .id(game.getId().getValue())
                 .number(game.getNumber())
                 .status(game.getStatus())
                 .mode(game.getMode())
-                .currentTurnPlayerId(game.getCurrentTurnPlayer() != null ? game.getCurrentTurnPlayer().getId().getValue() : null)
+                .currentTurnPlayerId(
+                        game.getCurrentTurnPlayer() != null && game.getCurrentTurnPlayer().getId() != null ?
+                        game.getCurrentTurnPlayer().getId().getValue() :
+                        null
+                )
                 .winnerId(game.getWinner() != null ? game.getWinner().getId().getValue() : null)
                 .players(game.getPlayers().stream().map(Mapper::toDto).collect(Collectors.toList()))
                 .build();
