@@ -43,7 +43,7 @@ public class Game {
 
     public List<Player> getPlayers() {
         if (players == null) {
-            new ArrayList<>();
+            players = new ArrayList<>();
         }
         return players;
     }
