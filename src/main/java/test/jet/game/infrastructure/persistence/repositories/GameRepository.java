@@ -14,6 +14,7 @@ import test.jet.game.infrastructure.persistence.entities.Role;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Repository
@@ -39,22 +40,30 @@ public class GameRepository implements IGameRepository {
     public Game save(Game game, Boolean resetActiveGame) {
         var gameEntity = Mapper.fromDomain(game);
 
-//        if (gameEntity.getPlayers().size() == 2 && gameEntity.getCurrentTurnPlayer().getId() == null) {
-//            test.jet.game.infrastructure.persistence.entities.Player playerEntity = findOrCreatePlayer(
-//                    gameEntity.getCurrentTurnPlayer().getEmail(),
-//                    gameEntity.getCurrentTurnPlayer().getInputType()
-//            );
-//
-//            gameEntity.setCurrentTurnPlayer(playerEntity);
-//            gameEntity.setPlayers(gameEntity.getPlayers().stream().peek(player -> {
-//                if (player.getEmail().equals(playerEntity.getEmail())) {
-//                    player.setId(playerEntity.getId());
-//                    player.setActiveGame(gameEntity);
-//                }
-//            }).collect(Collectors.toList()));
-//        }
+        if (
+                gameEntity.getPlayers().size() == 2 &&
+                gameEntity.getCurrentTurnPlayer() != null &&
+                gameEntity.getCurrentTurnPlayer().getId() == null
+        ) {
+            test.jet.game.infrastructure.persistence.entities.Player playerEntity = findOrCreatePlayer(
+                    gameEntity.getCurrentTurnPlayer().getEmail(),
+                    gameEntity.getCurrentTurnPlayer().getInputType()
+            );
+
+            gameEntity.setCurrentTurnPlayer(playerEntity);
+            gameEntity.getPlayers().stream().filter(p -> p.getEmail().equals(playerEntity.getEmail())).forEach(p -> {
+                p.setId(playerEntity.getId());
+                p.setActiveGame(gameEntity);
+                playerJpaRepository.save(p);
+            });
+        }
 
         if (resetActiveGame) {
+            gameEntity.getPlayers().forEach(p -> {
+                p.setActiveGame(null);
+                p.setInputType(null);
+            });
+            playerJpaRepository.saveAll(gameEntity.getPlayers());
             gameEntity.setPlayers(new ArrayList<>());
         }
 

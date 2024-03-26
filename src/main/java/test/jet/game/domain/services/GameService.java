@@ -13,6 +13,7 @@ import test.jet.game.domain.models.value_objects.GameId;
 import test.jet.game.domain.models.value_objects.PlayerEmail;
 import test.jet.game.domain.models.value_objects.PlayerId;
 import test.jet.game.domain.repositories.IGameRepository;
+import test.jet.game.infrastructure.persistence.Mapper;
 
 import java.util.Optional;
 
@@ -28,7 +29,9 @@ public class GameService implements IGameService {
         // Check if player has an in progress game or not
         Optional<Game> existingGame = this.repository.getPlayerActiveGame(new PlayerEmail(email));
         // return game if exists
-        if (existingGame.isPresent()) return existingGame.get();
+        if (existingGame.isPresent()) {
+            return existingGame.get();
+        }
         // if game mode is PLAYER_VS_COMPUTER
         if (mode == GAME_MODE.PLAYER_VS_COMPUTER) {
             // create new game
@@ -40,9 +43,10 @@ public class GameService implements IGameService {
             // join if a joinable game exists
             Game game = gameOptional.get();
             game.startGame(email, inputType);
+            System.out.println(game);
             game = repository.save(game, false);
             // notify other player that another player joined
-            eventPublisher.publish(new GameEvent(game, game.getOtherPlayersId(game.getCurrentTurnPlayer().getId()), GameEvent.JOINED));
+            eventPublisher.publish(new GameEvent(Mapper.toDto(game), game.getOtherPlayersId(game.getCurrentTurnPlayer().getId()), GameEvent.JOINED));
             // return game
             return game;
         }
@@ -68,7 +72,7 @@ public class GameService implements IGameService {
         if (game.canBeFinished()) {
             game.finishGame(false);
             if (game.getMode() == GAME_MODE.PLAYER_VS_PLAYER) {
-                eventPublisher.publish(new GameEvent(game, game.getOtherPlayersId(playerId), GameEvent.FINISHED));
+                eventPublisher.publish(new GameEvent(Mapper.toDto(game), game.getOtherPlayersId(playerId), GameEvent.FINISHED));
             }
             repository.save(game, true);
             return game;
@@ -90,7 +94,7 @@ public class GameService implements IGameService {
         game = repository.save(game, false);
         if (game.getMode() == GAME_MODE.PLAYER_VS_PLAYER) {
             // notify the other player
-            eventPublisher.publish(new GameEvent(game, game.getOtherPlayersId(playerId), GameEvent.TURN_PLAYED));
+            eventPublisher.publish(new GameEvent(Mapper.toDto(game), game.getOtherPlayersId(playerId), GameEvent.TURN_PLAYED));
         }
         return game;
     }

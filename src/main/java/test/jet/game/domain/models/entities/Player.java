@@ -8,6 +8,7 @@ import test.jet.game.domain.models.value_objects.PlayerId;
 @Getter
 @Setter
 @EqualsAndHashCode
+@ToString
 @Builder
 public class Player {
     public static enum PLAYER_INPUT_TYPE {

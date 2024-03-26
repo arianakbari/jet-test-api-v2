@@ -15,6 +15,7 @@ import java.util.UUID;
 @Setter
 @Getter
 @EqualsAndHashCode
+@ToString
 @Entity
 @Table(name = "games")
 public class Game {
@@ -35,7 +36,7 @@ public class Game {
     @JoinColumn(name = "currentTurnPlayerId", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_game_current_player"))
     private Player currentTurnPlayer;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "winnerId", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_game_winner"))
     private Player winner;
 

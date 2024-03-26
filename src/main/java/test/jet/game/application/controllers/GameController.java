@@ -13,6 +13,7 @@ import test.jet.game.domain.models.value_objects.PlayerId;
 import test.jet.game.domain.services.IGameService;
 import test.jet.game.domain.services.INotificationService;
 import test.jet.game.domain.services.ITokenService;
+import test.jet.game.infrastructure.persistence.Mapper;
 
 import java.util.stream.Collectors;
 
@@ -25,29 +26,10 @@ public class GameController {
     private INotificationService notificationService;
     private ITokenService tokenService;
 
-    private PlayerResponseDto toDto(Player player) {
-        return PlayerResponseDto.builder()
-                .id(player.getId().getValue())
-                .email(player.getEmail().getValue())
-                .build();
-    }
-
-    private GameResponseDto toDto(Game game) {
-        return GameResponseDto.builder()
-                .id(game.getId().getValue())
-                .number(game.getNumber())
-                .status(game.getStatus())
-                .mode(game.getMode())
-                .currentTurnPlayerId(game.getCurrentTurnPlayer() != null ? game.getCurrentTurnPlayer().getId().getValue() : null)
-                .winnerId(game.getWinner() != null ? game.getWinner().getId().getValue() : null)
-                .players(game.getPlayers().stream().map(this::toDto).collect(Collectors.toList()))
-                .build();
-    }
-
     @PostMapping("/join")
     public ResponseEntity<JoinGameResponseDto> joinGame(@RequestBody @Valid JoinGameRequestDto dto) {
         var response = JoinGameResponseDto.builder()
-                .game(toDto(gameService.joinGame(dto.getEmail(), dto.getMode(), dto.getInputType())))
+                .game(Mapper.toDto(gameService.joinGame(dto.getEmail(), dto.getMode(), dto.getInputType())))
                 .token(tokenService.sign(dto.getEmail()))
                 .build();
         return ResponseEntity.ok(response);
@@ -59,7 +41,7 @@ public class GameController {
                 (test.jet.game.infrastructure.persistence.entities.Player)
                         SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         var response = gameService.makeMove(new GameId(dto.getGameId().toString()), new PlayerId(player.getId().toString()), dto.getChoice());
-        return ResponseEntity.ok(toDto(response));
+        return ResponseEntity.ok(Mapper.toDto(response));
     }
 
     @PostMapping("/subscribe")

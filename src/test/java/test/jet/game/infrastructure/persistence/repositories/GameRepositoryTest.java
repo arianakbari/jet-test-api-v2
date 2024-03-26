@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import test.jet.game.domain.models.value_objects.GameId;
 import test.jet.game.domain.models.value_objects.PlayerEmail;
-import test.jet.game.infrastructure.persistence.Mapper;
 import test.jet.game.infrastructure.persistence.entities.Game;
 import test.jet.game.infrastructure.persistence.entities.Player;
 

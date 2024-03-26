@@ -19,6 +19,7 @@ import java.util.function.Consumer;
 @Getter
 @Setter
 @EqualsAndHashCode
+@ToString
 @Builder
 public class Game {
     public static enum GAME_STATUS {
