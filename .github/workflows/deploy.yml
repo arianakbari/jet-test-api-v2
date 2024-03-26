@@ -29,4 +29,4 @@ jobs:
           NAME: ${{ vars.NAME }}
         run: |
           npm i -g @liara/cli
-          liara deploy --platform=docker --api-token="$LIARA_TOKEN" --port="$PORT" --app="$NAME"
+          liara deploy --platform=docker --api-token="$LIARA_TOKEN" --port="$PORT" --app="$NAME" --detach
