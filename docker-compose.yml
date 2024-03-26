@@ -1,0 +1,33 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: jet-test-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: jet-test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /data/postgres
+    volumes:
+      - jet-test-postgres-data:/data/postgres
+
+  app:
+    container_name: jet-test-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - ${PORT:-3000}:${PORT:-3000}
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/jet-test
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+
+volumes:
+  jet-test-postgres-data:
