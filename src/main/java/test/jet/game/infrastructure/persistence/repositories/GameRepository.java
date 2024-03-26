@@ -9,6 +9,7 @@ import test.jet.game.domain.models.value_objects.GameId;
 import test.jet.game.domain.models.value_objects.PlayerEmail;
 import test.jet.game.domain.repositories.IGameRepository;
 import test.jet.game.infrastructure.persistence.Mapper;
+import test.jet.game.infrastructure.persistence.entities.Role;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -98,6 +99,7 @@ public class GameRepository implements IGameRepository {
         }
 
         player.setInputType(inputType);
+        player.setRole(Role.USER);
 
         return playerJpaRepository.save(player);
     }

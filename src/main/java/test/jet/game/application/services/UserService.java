@@ -1,6 +1,6 @@
 package test.jet.game.application.services;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import test.jet.game.infrastructure.persistence.repositories.PlayerJpaRepository;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class UserService {
 
     private PlayerJpaRepository playerJpaRepository;

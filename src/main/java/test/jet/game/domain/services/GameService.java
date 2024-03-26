@@ -67,7 +67,9 @@ public class GameService implements IGameService {
         // check if the game is finished or not
         if (game.canBeFinished()) {
             game.finishGame(false);
-            eventPublisher.publish(new GameEvent(game, game.getOtherPlayersId(playerId), GameEvent.FINISHED));
+            if (game.getMode() == GAME_MODE.PLAYER_VS_PLAYER) {
+                eventPublisher.publish(new GameEvent(game, game.getOtherPlayersId(playerId), GameEvent.FINISHED));
+            }
             repository.save(game, true);
             return game;
         }
@@ -78,7 +80,6 @@ public class GameService implements IGameService {
         // check if game is finished after computers turn
         if (game.canBeFinished()) {
             game.finishGame(true);
-            eventPublisher.publish(new GameEvent(game, playerId, GameEvent.FINISHED));
             repository.save(game, true);
             return game;
         }
@@ -87,8 +88,10 @@ public class GameService implements IGameService {
         game.swapTurn();
         // persist the game and return
         game = repository.save(game, false);
-        // notify the other player
-        eventPublisher.publish(new GameEvent(game, game.getOtherPlayersId(playerId), GameEvent.TURN_PLAYED));
+        if (game.getMode() == GAME_MODE.PLAYER_VS_PLAYER) {
+            // notify the other player
+            eventPublisher.publish(new GameEvent(game, game.getOtherPlayersId(playerId), GameEvent.TURN_PLAYED));
+        }
         return game;
     }
 }
