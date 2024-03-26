@@ -1,0 +1,32 @@
+name: Deploy
+
+on:
+  workflow_call:
+
+jobs:
+  deploy:
+    name: Deploy
+
+    runs-on: ubuntu-latest
+
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Use Node.js to install Liara cli
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.11.1"
+
+      # we can run any command or workflow from here to deploy our app in a real environment
+      - name: Deploy to Liara
+        env:
+          LIARA_TOKEN: ${{ secrets.LIARA_API_TOKEN }}
+          PORT: ${{ vars.PORT }}
+          NAME: ${{ vars.NAME }}
+        run: |
+          npm i -g @liara/cli
+          pnpm live --platform=docker --api-token="$LIARA_TOKEN" --port="$PORT" --app="$NAME"
